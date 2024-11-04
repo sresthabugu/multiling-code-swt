@@ -15,7 +15,6 @@ import utils
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# To make a reproducible output
 np.random.seed(CFG.seed)
 torch.manual_seed(CFG.seed)
 torch.cuda.manual_seed_all(CFG.seed)
@@ -46,28 +45,21 @@ class Data:
     train, train_sentences = readtsv("train_data.tsv")
     test, test_sentences = readtsv("dev_data.tsv")
 
-    # list of all characters in the vocabulary
     Chars = sorted( set(Counter("".join(train.token.values.tolist()))) )
 
-    # list of all tokens and labels(=languages)
     tokens = sorted(set(train.token.values))
     labels = sorted(set(train.label.values))
 
-    # token to index and vice versa
     tok2id = {"<PAD>":0, "<UNK>":1, "<S>":2, "</S>":3}
     tok2id.update({t: i + 4 for i, t in enumerate(tokens)})
     id2tok = {i: t for t,i in tok2id.items()}
-    # label to index and vice versa
-    # lbl2id = {"<PAD>":0}
+    
     lbl2id = {label: i for i, label in enumerate(labels)}
     lbl2id.update({"<PAD>":len(lbl2id)})
     id2lbl = {i: label for label,i in lbl2id.items()}
-    # character to index and vice versa
     chr2id = {"<PAD>":0, "<UNK>":1, "<S>":2, "</S>":3}
     chr2id.update({char: i + 4 for i, char in enumerate(Chars)})
     id2chr = {i: char for char,i in chr2id.items()}
-
-    # vocabulary size
     char_vocab_size = len(chr2id)
     token_vocab_size = len(tok2id)
     label_vocab_size = len(lbl2id)-1
@@ -145,24 +137,11 @@ test_loader = DataLoader(
 )
 
 if __name__ == "__main__":
-    # for sent, lbl, _ in train_loader:
-    #     print(sent.shape, lbl.shape)
-    #     print(lbl)
-    #     break
-
-    # for i in (7,14):
-    #     et = Data.X_test_sentences_emb[i]
-    #     el = Data.Y_test_sentences_emb[i]
-    #     print(et, el, Data.decipher_text(et), Data.decipher_label(el), sep='\n')
-    #     print()
-    # print(Data.encode_text('This is a book !'))
+   
 
     for sent, lab, sent_lens in train_loader:
-        # print(sent.shape, lab.shape, sent_lens, sep='\n')
-        # print(sent, lab, sent_lens, sep='\n')
+        
         for item in utils.flatten(lab, sent_lens):
             print(item, end=", ")
         sys.exit()
-    # print('\n')
-    # for sent, lab, _ in test_loader:
-    #     print(lab.shape[1], end=' ')
+   
